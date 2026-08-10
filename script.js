@@ -3,41 +3,13 @@
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* Typing effect */
-  const roles = ["Backend Developer", "Spring Boot Developer", "Full-Stack Developer"];
-  const typeEl = document.getElementById("typeWriter");
-  if (typeEl && !reduceMotion) {
-    let role = 0, char = 0, deleting = false;
-    const tick = () => {
-      const word = roles[role];
-      typeEl.textContent = word.slice(0, char);
-      if (!deleting && char < word.length) {
-        char++;
-        setTimeout(tick, 80);
-      } else if (!deleting) {
-        deleting = true;
-        setTimeout(tick, 1600);
-      } else if (char > 0) {
-        char--;
-        setTimeout(tick, 45);
-      } else {
-        deleting = false;
-        role = (role + 1) % roles.length;
-        setTimeout(tick, 350);
-      }
-    };
-    tick();
-  } else if (typeEl) {
-    typeEl.textContent = roles[0];
-  }
-
-  /* Sticky nav state */
+  /* Sticky nav: shrink into floating pill on scroll */
   const nav = document.getElementById("nav");
-  const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 10);
+  const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 16);
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  /* Mobile menu toggle */
+  /* Mobile menu */
   const navToggle = document.getElementById("navToggle");
   const navLinks = document.getElementById("navLinks");
   const closeMenu = () => {
@@ -52,28 +24,29 @@
   });
   navLinks.querySelectorAll("a").forEach((a) => a.addEventListener("click", closeMenu));
 
-  /* Precise anchor scroll: land each section start just below the floating pill nav */
-  navLinks.querySelectorAll('a[href^="#"]').forEach((a) => {
+  /* Smooth anchor scroll, clearing the floating nav */
+  const anchorOffset = () => (window.innerWidth <= 900 ? 76 : 96);
+  document.querySelectorAll('a[href^="#"]').forEach((a) => {
     a.addEventListener("click", (e) => {
       const target = document.querySelector(a.getAttribute("href"));
       if (!target) return;
       e.preventDefault();
-      const top = target.getBoundingClientRect().top + window.scrollY - 100;
+      const top = target.getBoundingClientRect().top + window.scrollY - anchorOffset();
       window.scrollTo({ top, behavior: reduceMotion ? "auto" : "smooth" });
     });
   });
 
-  /* Active nav link highlighting + sliding indicator */
+  /* Active-section scroll-spy + sliding nav indicator */
   const sections = [...document.querySelectorAll("main section[id]")];
-  const links = [...navLinks.querySelectorAll("a")];
+  const links = [...navLinks.querySelectorAll('a[href^="#"]')];
   const indicator = navLinks.querySelector(".nav-indicator");
   const moveIndicator = (link) => {
-    if (!indicator || !link || window.innerWidth <= 860) return;
+    if (!indicator || !link || window.innerWidth <= 900) return;
     indicator.style.width = `${link.offsetWidth}px`;
     indicator.style.transform = `translateX(${link.offsetLeft}px)`;
   };
   const spy = () => {
-    const pos = window.scrollY + 120;
+    const pos = window.scrollY + 130;
     let current = sections[0]?.id;
     for (const s of sections) if (s.offsetTop <= pos) current = s.id;
     let active = null;
@@ -87,22 +60,6 @@
   spy();
   window.addEventListener("scroll", spy, { passive: true });
   window.addEventListener("resize", spy);
-
-  /* Dark-section nav state: flip nav to light when the dark Projects section
-     overlaps the nav's vertical band near the top of the viewport. */
-  const projects = document.getElementById("projects");
-  const NAV_BAND = 96;
-  const updateNavOnDark = () => {
-    if (!projects) return;
-    const top = projects.offsetTop;
-    const bottom = top + projects.offsetHeight;
-    const bandTop = window.scrollY;
-    const bandBottom = window.scrollY + NAV_BAND;
-    nav.classList.toggle("nav--on-dark", top < bandBottom && bottom > bandTop);
-  };
-  updateNavOnDark();
-  window.addEventListener("scroll", updateNavOnDark, { passive: true });
-  window.addEventListener("resize", updateNavOnDark);
 
   /* Scroll reveal with per-group stagger */
   const revealEls = document.querySelectorAll(".reveal");
@@ -125,11 +82,83 @@
           }
         }
       },
-      { threshold: 0.12 }
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
     );
     revealEls.forEach((el) => io.observe(el));
   }
 
+  /* Animated counters (CGPA, achievement ranks) */
+  const counters = document.querySelectorAll("[data-count]");
+  const counterStatic = (el) => {
+    const decimals = parseInt(el.dataset.decimals || "0", 10);
+    el.textContent = parseFloat(el.dataset.count).toFixed(decimals) + (el.dataset.suffix || "");
+  };
+  const animateCount = (el) => {
+    const target = parseFloat(el.dataset.count);
+    const decimals = parseInt(el.dataset.decimals || "0", 10);
+    const suffix = el.dataset.suffix || "";
+    const start = performance.now();
+    const duration = 1400;
+    const step = (now) => {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * eased).toFixed(decimals);
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = target.toFixed(decimals) + suffix;
+    };
+    requestAnimationFrame(step);
+  };
+  if (reduceMotion || !("IntersectionObserver" in window)) {
+    counters.forEach(counterStatic);
+  } else {
+    const cio = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            animateCount(e.target);
+            cio.unobserve(e.target);
+          }
+        }
+      },
+      { threshold: 0.5 }
+    );
+    counters.forEach((el) => cio.observe(el));
+  }
+
+  /* Live IST clock in the hero panel */
+  const clock = document.querySelector("[data-clock]");
+  if (clock) {
+    const fmt = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Kolkata",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+    const update = () => { clock.textContent = `${fmt.format(new Date())} IST`; };
+    update();
+    setInterval(update, 1000);
+  }
+
+  /* Subtle cursor glow — fine pointers only, no reduced motion */
+  const glow = document.querySelector("[data-cursor-glow]");
+  if (glow && window.matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
+    document.body.classList.add("cursor-on");
+    let x = window.innerWidth / 2;
+    let y = window.innerHeight / 2;
+    let tx = x;
+    let ty = y;
+    const raf = () => {
+      x += (tx - x) * 0.12;
+      y += (ty - y) * 0.12;
+      glow.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      requestAnimationFrame(raf);
+    };
+    window.addEventListener("mousemove", (e) => { tx = e.clientX; ty = e.clientY; }, { passive: true });
+    requestAnimationFrame(raf);
+  }
+
   /* Footer year */
-  document.getElementById("year").textContent = new Date().getFullYear();
+  const year = document.getElementById("year");
+  if (year) year.textContent = new Date().getFullYear();
 })();
