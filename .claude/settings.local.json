@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"c=open\\('styles.css'\\).read\\(\\); print\\('balanced:', c.count\\('{'\\)==c.count\\('}'\\)\\)\")",
+      "Bash(node --check script.js)",
+      "Bash(python3 *)"
+    ]
+  }
+}
