@@ -158,6 +158,18 @@
     requestAnimationFrame(raf);
   }
 
+  /* Cursor-tracking spotlight on work rows — fine pointers only */
+  const spotlightEls = document.querySelectorAll("[data-spotlight]");
+  if (spotlightEls.length && !reduceMotion && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    spotlightEls.forEach((el) => {
+      el.addEventListener("mousemove", (e) => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+        el.style.setProperty("--my", `${e.clientY - r.top}px`);
+      });
+    });
+  }
+
   /* Footer year */
   const year = document.getElementById("year");
   if (year) year.textContent = new Date().getFullYear();

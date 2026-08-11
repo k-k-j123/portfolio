@@ -19,9 +19,9 @@
   --radius-lg: 18px;
   --container: 1180px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Geist", system-ui, sans-serif;
   --font-body:
-    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    "Geist", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono:
     "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas,
     monospace;
@@ -47,6 +47,17 @@ body {
   overflow-x: hidden;
 }
 
+/* Site-wide grain overlay — breaks flatness outside the hero */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
 img,
 svg {
   display: block;
@@ -62,6 +73,31 @@ ol {
 strong {
   font-weight: 600;
   color: var(--ink);
+}
+
+/* Balanced headline wrapping (kills orphaned last words) */
+.hero-name,
+.hero-headline,
+.section-title,
+.work-title h3,
+.record-title,
+.credential h3,
+.contact-title,
+.timeline-item h3,
+.stack-cat {
+  text-wrap: balance;
+}
+
+/* Tabular figures wherever data / indices appear */
+.section-index,
+.work-index,
+.record-index,
+.record-marker,
+.edu-stat-num,
+.stack-index,
+.panel-clock,
+[data-clock] {
+  font-variant-numeric: tabular-nums;
 }
 
 ::selection {
@@ -222,7 +258,7 @@ body.cursor-on .cursor-glow {
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
   border-color: var(--hairline);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 18px 50px rgba(3, 8, 5, 0.5);
 }
 
 .nav-logo {
@@ -281,6 +317,22 @@ body.cursor-on .cursor-glow {
 .nav-links a.active {
   color: var(--accent-soft);
 }
+.nav-links a.nav-resume {
+  margin-left: 10px;
+  padding: 8px 15px;
+  border: 1px solid var(--accent-hairline);
+  border-radius: var(--radius-sm);
+  background: var(--accent-dim);
+  color: var(--accent-soft);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+}
+.nav-links a.nav-resume:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-on);
+}
 .nav-indicator {
   position: absolute;
   top: 2px;
@@ -329,6 +381,7 @@ body.cursor-on .cursor-glow {
 .hero {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   align-items: center;
@@ -499,8 +552,10 @@ body.cursor-on .cursor-glow {
     rgba(255, 255, 255, 0.04),
     rgba(255, 255, 255, 0.015)
   );
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   box-shadow:
-    0 40px 90px rgba(0, 0, 0, 0.5),
+    0 40px 90px rgba(3, 8, 5, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
   overflow: hidden;
   animation: panel-in 0.9s var(--ease-out) 0.2s both;
@@ -752,8 +807,7 @@ body.cursor-on .cursor-glow {
 .fact-label {
   font-family: var(--font-mono);
   font-size: 0.68rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--ink-faint);
 }
 .fact-value {
@@ -773,6 +827,8 @@ body.cursor-on .cursor-glow {
   border-top: 1px solid var(--hairline);
 }
 .work-row {
+  --mx: 50%;
+  --my: 40%;
   display: grid;
   grid-template-columns: 64px minmax(0, 1fr) auto;
   gap: clamp(20px, 3vw, 40px);
@@ -782,7 +838,11 @@ body.cursor-on .cursor-glow {
   transition: background 0.3s ease;
 }
 .work-row:hover {
-  background: linear-gradient(90deg, rgba(52, 211, 153, 0.04), transparent 45%);
+  background: radial-gradient(
+    460px circle at var(--mx) var(--my),
+    rgba(52, 211, 153, 0.07),
+    transparent 65%
+  );
 }
 .work-index {
   font-family: var(--font-mono);
@@ -814,8 +874,7 @@ body.cursor-on .cursor-glow {
 .work-position {
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0.03em;
   color: var(--ink-faint);
 }
 .work-desc {
@@ -896,30 +955,42 @@ body.cursor-on .cursor-glow {
   border-color: var(--accent);
 }
 
-/* ---------- Stack ---------- */
-.stack-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-}
-.stack-group {
+/* ---------- Stack (capability matrix) ---------- */
+.stack-matrix {
   border: 1px solid var(--hairline);
   border-radius: var(--radius-lg);
   background: var(--surface);
-  padding: 26px 26px 28px;
-  transition:
-    border-color 0.3s ease,
-    transform 0.3s var(--ease-out);
+  overflow: hidden;
 }
-.stack-group:hover {
-  border-color: var(--accent-hairline);
-  transform: translateY(-3px);
-}
-.stack-head {
-  display: flex;
+.stack-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 64px minmax(150px, 210px) minmax(0, 1fr);
   align-items: center;
-  gap: 14px;
-  margin-bottom: 22px;
+  gap: clamp(16px, 2.5vw, 34px);
+  padding: 26px 30px;
+  transition: background 0.3s ease;
+}
+.stack-row + .stack-row {
+  border-top: 1px solid var(--hairline);
+}
+.stack-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.35s var(--ease-out);
+}
+.stack-row:hover {
+  background: rgba(52, 211, 153, 0.03);
+}
+.stack-row:hover::before {
+  transform: scaleY(1);
 }
 .stack-index {
   font-family: var(--font-mono);
@@ -928,10 +999,14 @@ body.cursor-on .cursor-glow {
 }
 .stack-cat {
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  transition: color 0.3s ease;
+}
+.stack-row:hover .stack-cat {
+  color: var(--accent-soft);
 }
 .stack-chips {
   display: flex;
@@ -1074,29 +1149,27 @@ body.cursor-on .cursor-glow {
   font-size: 0.88rem;
   line-height: 1.6;
 }
-.cert-row {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
+.credential-list {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  overflow: hidden;
   margin-top: 56px;
 }
-.cert-card {
+.credential {
   display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  padding: 20px 22px;
-  transition:
-    border-color 0.3s ease,
-    transform 0.3s var(--ease-out);
+  align-items: center;
+  gap: 18px;
+  padding: 22px 26px;
+  transition: background 0.3s ease;
 }
-.cert-card:hover {
-  border-color: var(--accent-hairline);
-  transform: translateY(-2px);
+.credential + .credential {
+  border-top: 1px solid var(--hairline);
 }
-.cert-badge {
+.credential:hover {
+  background: rgba(52, 211, 153, 0.03);
+}
+.credential-badge {
   font-family: var(--font-mono);
   font-size: 0.78rem;
   font-weight: 600;
@@ -1105,67 +1178,94 @@ body.cursor-on .cursor-glow {
   border-radius: 6px;
   padding: 4px 8px;
   background: var(--accent-dim);
+  flex-shrink: 0;
 }
-.cert-card h3 {
+.credential-body h3 {
   font-size: 0.98rem;
   font-weight: 600;
   margin-bottom: 4px;
 }
-.cert-card p {
+.credential-body p {
   color: var(--ink-faint);
   font-size: 0.85rem;
 }
-
-/* ---------- Achievements ---------- */
-.achievement-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-}
-.ach {
-  position: relative;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  padding: 30px 28px 32px;
-  overflow: hidden;
-  transition:
-    border-color 0.3s ease,
-    transform 0.3s var(--ease-out),
-    box-shadow 0.3s ease;
-}
-.ach:hover {
-  border-color: var(--accent-hairline);
-  transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-}
-.ach-index {
-  position: absolute;
-  top: 24px;
-  right: 26px;
+.credential-arrow {
+  margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   color: var(--ink-faint);
+  flex-shrink: 0;
+  transition:
+    color 0.3s ease,
+    transform 0.3s var(--ease-out);
 }
-.ach-marker {
-  font-family: var(--font-display);
-  font-size: clamp(2.6rem, 5vw, 3.6rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
+.credential:hover .credential-arrow {
   color: var(--accent);
+  transform: translateX(4px);
+}
+
+/* ---------- Achievements (record board) ---------- */
+.record-list {
+  border-top: 1px solid var(--hairline);
+}
+.record {
+  position: relative;
+  display: grid;
+  grid-template-columns: clamp(110px, 16vw, 190px) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(20px, 3vw, 44px);
+  padding: 34px 12px 34px 26px;
+  border-bottom: 1px solid var(--hairline);
+  transition: transform 0.35s var(--ease-out);
+}
+.record::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 0;
+  background: var(--accent);
+  transform: translateY(-50%);
+  transition: height 0.35s var(--ease-out);
+}
+.record:hover {
+  transform: translateX(8px);
+}
+.record:hover::before {
+  height: 100%;
+}
+.record-marker {
   display: block;
-}
-.ach-title {
   font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin: 20px 0 8px;
+  font-size: clamp(2.8rem, 6vw, 4.4rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--accent);
+  transition: color 0.35s ease;
 }
-.ach-desc {
+.record:hover .record-marker {
+  color: var(--accent);
+}
+.record-body h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.record-body p {
   color: var(--ink-muted);
   font-size: 0.94rem;
   line-height: 1.6;
+  max-width: 56ch;
+}
+.record-index {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--ink-faint);
 }
 
 /* ---------- Contact ---------- */
@@ -1191,6 +1291,20 @@ body.cursor-on .cursor-glow {
 }
 .contact-inner {
   position: relative;
+}
+.contact-inner::before {
+  content: "06";
+  position: absolute;
+  top: -60px;
+  right: -3%;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(11rem, 28vw, 19rem);
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
+  pointer-events: none;
 }
 .contact-eyebrow {
   display: flex;
@@ -1270,8 +1384,7 @@ body.cursor-on .cursor-glow {
 .footer-role {
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.03em;
   color: var(--ink-faint);
   margin-top: 3px;
 }
@@ -1375,9 +1488,6 @@ body.cursor-on .cursor-glow {
     padding: 10px 12px 10px 14px;
     border-radius: var(--radius-md);
   }
-  .btn-nav {
-    display: none;
-  }
   .nav-toggle {
     display: flex;
   }
@@ -1413,14 +1523,16 @@ body.cursor-on .cursor-glow {
   .nav-links a.active {
     color: var(--accent-soft);
   }
-  .nav-links .nav-resume-mobile {
-    margin-top: 24px;
+  .nav-links a.nav-resume {
+    margin-top: 26px;
     font-family: var(--font-mono);
     font-size: 0.9rem;
+    letter-spacing: 0.08em;
     color: var(--accent-soft);
     border: 1px solid var(--accent-hairline);
     border-radius: 10px;
     background: var(--accent-dim);
+    padding: 12px 26px;
   }
   .nav-indicator {
     display: none;
@@ -1456,10 +1568,31 @@ body.cursor-on .cursor-glow {
 }
 
 @media (max-width: 720px) {
-  .stack-grid,
-  .achievement-list,
-  .cert-row {
-    grid-template-columns: 1fr;
+  .stack-row {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 6px 14px;
+    padding: 22px 18px;
+  }
+  .stack-cat {
+    grid-column: 2;
+  }
+  .stack-chips {
+    grid-column: 2;
+  }
+  .record {
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 16px;
+    padding: 26px 12px 26px 20px;
+  }
+  .record-index {
+    display: none;
+  }
+  .record-marker {
+    font-size: clamp(2.4rem, 13vw, 3.4rem);
+  }
+  .credential {
+    padding: 18px;
+    gap: 14px;
   }
   .work-row {
     padding: 34px 4px;

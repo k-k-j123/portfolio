@@ -19,10 +19,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0a0b0e" />
+    <meta name="twitter:card" content="summary" />
+    <meta property="og:type" content="website" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -44,6 +47,13 @@
           <a href="#education">Education</a>
           <a href="#achievements">Achievements</a>
           <a href="#contact">Contact</a>
+          <a
+            href="https://drive.google.com/file/d/1d1agxg1Z2-KPkbYENjN6z6vz2jgjPO18/view?usp=sharing"
+            class="nav-resume"
+            target="_blank"
+            rel="noopener"
+            >Resume</a
+          >
           <span class="nav-indicator" aria-hidden="true"></span>
         </nav>
         <button
@@ -252,6 +262,7 @@
                 href="https://github.com/k-k-j123/SmartStock_CRM"
                 target="_blank"
                 rel="noopener"
+                data-spotlight
               >
                 <span class="work-index" aria-hidden="true">01</span>
                 <div class="work-body">
@@ -295,6 +306,7 @@
                 href="https://github.com/k-k-j123/autolog"
                 target="_blank"
                 rel="noopener"
+                data-spotlight
               >
                 <span class="work-index" aria-hidden="true">02</span>
                 <div class="work-body">
@@ -331,6 +343,7 @@
                 href="https://github.com/k-k-j123/Moody"
                 target="_blank"
                 rel="noopener"
+                data-spotlight
               >
                 <span class="work-index" aria-hidden="true">03</span>
                 <div class="work-body">
@@ -368,6 +381,7 @@
                 href="https://github.com/k-k-j123/Turf-Booking-System"
                 target="_blank"
                 rel="noopener"
+                data-spotlight
               >
                 <span class="work-index" aria-hidden="true">04</span>
                 <div class="work-body">
@@ -421,12 +435,10 @@
           </header>
           <h2 class="section-title reveal">The stack I build with.</h2>
 
-          <div class="stack-grid">
-            <div class="stack-group reveal">
-              <div class="stack-head">
-                <span class="stack-index" aria-hidden="true">01</span>
-                <h3 class="stack-cat">Backend</h3>
-              </div>
+          <div class="stack-matrix">
+            <div class="stack-row reveal">
+              <span class="stack-index" aria-hidden="true">01</span>
+              <h3 class="stack-cat">Backend</h3>
               <ul class="stack-chips">
                 <li>Java</li>
                 <li>Spring Boot</li>
@@ -436,11 +448,9 @@
               </ul>
             </div>
 
-            <div class="stack-group reveal">
-              <div class="stack-head">
-                <span class="stack-index" aria-hidden="true">02</span>
-                <h3 class="stack-cat">Database</h3>
-              </div>
+            <div class="stack-row reveal">
+              <span class="stack-index" aria-hidden="true">02</span>
+              <h3 class="stack-cat">Database</h3>
               <ul class="stack-chips">
                 <li>MySQL</li>
                 <li>PostgreSQL</li>
@@ -448,11 +458,9 @@
               </ul>
             </div>
 
-            <div class="stack-group reveal">
-              <div class="stack-head">
-                <span class="stack-index" aria-hidden="true">03</span>
-                <h3 class="stack-cat">Tools</h3>
-              </div>
+            <div class="stack-row reveal">
+              <span class="stack-index" aria-hidden="true">03</span>
+              <h3 class="stack-cat">Tools</h3>
               <ul class="stack-chips">
                 <li>Git</li>
                 <li>Docker</li>
@@ -462,11 +470,9 @@
               </ul>
             </div>
 
-            <div class="stack-group reveal">
-              <div class="stack-head">
-                <span class="stack-index" aria-hidden="true">04</span>
-                <h3 class="stack-cat">AI / Modern Dev</h3>
-              </div>
+            <div class="stack-row reveal">
+              <span class="stack-index" aria-hidden="true">04</span>
+              <h3 class="stack-cat">AI / Modern Dev</h3>
               <ul class="stack-chips">
                 <li>AI APIs</li>
                 <li>Agentic AI</li>
@@ -522,23 +528,25 @@
             </div>
           </div>
 
-          <div class="cert-row">
-            <div class="cert-card reveal">
-              <span class="cert-badge" aria-hidden="true">OC</span>
-              <div>
+          <div class="credential-list">
+            <div class="credential reveal">
+              <span class="credential-badge" aria-hidden="true">OC</span>
+              <div class="credential-body">
                 <h3>Oracle Certified Foundations Associate</h3>
                 <p>
                   Cloud Infrastructure · Identity Management · Security
                   Fundamentals
                 </p>
               </div>
+              <span class="credential-arrow" aria-hidden="true">→</span>
             </div>
-            <div class="cert-card reveal">
-              <span class="cert-badge" aria-hidden="true">API</span>
-              <div>
+            <div class="credential reveal">
+              <span class="credential-badge" aria-hidden="true">API</span>
+              <div class="credential-body">
                 <h3>Introduction to Web APIs</h3>
                 <p>REST Architecture · API Development Concepts</p>
               </div>
+              <span class="credential-arrow" aria-hidden="true">→</span>
             </div>
           </div>
         </div>
@@ -553,45 +561,54 @@
           </header>
           <h2 class="section-title reveal">Achievements &amp; milestones.</h2>
 
-          <ul class="achievement-list">
-            <li class="ach reveal">
-              <span class="ach-index" aria-hidden="true">01</span>
-              <span class="ach-marker"
+          <ul class="record-list">
+            <li class="record reveal">
+              <span class="record-marker"
                 ><span data-count="1" data-suffix="st">0</span></span
               >
-              <h3 class="ach-title">First in class</h3>
-              <p class="ach-desc">
-                Ranked first academically throughout all three years of
-                undergraduate studies.
-              </p>
+              <div class="record-body">
+                <h3 class="record-title">First in class</h3>
+                <p class="record-desc">
+                  Ranked first academically throughout all three years of
+                  undergraduate studies.
+                </p>
+              </div>
+              <span class="record-index" aria-hidden="true">01</span>
             </li>
-            <li class="ach reveal">
-              <span class="ach-index" aria-hidden="true">02</span>
-              <span class="ach-marker"
+            <li class="record reveal">
+              <span class="record-marker"
                 ><span data-count="4" data-suffix="th">0</span></span
               >
-              <h3 class="ach-title">Intercollegiate IoT</h3>
-              <p class="ach-desc">
-                Secured 4th place in an Intercollegiate IoT Competition.
-              </p>
+              <div class="record-body">
+                <h3 class="record-title">Intercollegiate IoT</h3>
+                <p class="record-desc">
+                  Secured 4th place in an Intercollegiate IoT Competition.
+                </p>
+              </div>
+              <span class="record-index" aria-hidden="true">02</span>
             </li>
-            <li class="ach reveal">
-              <span class="ach-index" aria-hidden="true">03</span>
-              <span class="ach-marker">IC</span>
-              <h3 class="ach-title">International research</h3>
-              <p class="ach-desc">
-                Presented research work at an International Conference.
-              </p>
+            <li class="record reveal">
+              <span class="record-marker">IC</span>
+              <div class="record-body">
+                <h3 class="record-title">International research</h3>
+                <p class="record-desc">
+                  Presented research work at an International Conference.
+                </p>
+              </div>
+              <span class="record-index" aria-hidden="true">03</span>
             </li>
-            <li class="ach reveal">
-              <span class="ach-index" aria-hidden="true">04</span>
-              <span class="ach-marker"
+            <li class="record reveal">
+              <span class="record-marker"
                 ><span data-count="2" data-suffix="nd">0</span></span
               >
-              <h3 class="ach-title">Intercollegiate photography</h3>
-              <p class="ach-desc">
-                Secured 2nd place in an Intercollegiate Photography Competition.
-              </p>
+              <div class="record-body">
+                <h3 class="record-title">Intercollegiate photography</h3>
+                <p class="record-desc">
+                  Secured 2nd place in an Intercollegiate Photography
+                  Competition.
+                </p>
+              </div>
+              <span class="record-index" aria-hidden="true">04</span>
             </li>
           </ul>
         </div>
